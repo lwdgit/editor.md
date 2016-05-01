@@ -64,7 +64,7 @@
                                 d = w.document;
                             
                             var title = document.querySelector('.editormd-preview h1');
-                            var head = '<title>' + title.textContent ? title.textContent : '' + '</title>';
+                            var head = '<title>' + title ? title.textContent : '' + '</title>';
                             var links = document.querySelectorAll('link[href]');
                             for(var i = 0, l = links.length; i < l; i++) {
                                 head += '<link rel="stylesheet" href="' + links[i].href + '">'
