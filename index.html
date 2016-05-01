@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh">
+    <head>
+        <meta charset="utf-8" />
+        <title>Online Markdown</title>
+        <link rel="stylesheet" href="./examples/css/style.css" />
+        <link rel="stylesheet" href="./css/editormd.css" />
+    </head>
+    <body>
+    <style>
+    span.overflow {
+        position: relative;
+        left: 0;
+        background: #fff;
+    }
+
+    </style>
+        <div id="layout">
+            <div id="test-editormd">
+                <textarea style="display:none;"></textarea>
+            </div>
+        </div>
+        <script src="./examples/js/jquery.min.js"></script>
+        <script src="./editormd.js"></script>
+        <script type="text/javascript">
+			var testEditor;
+            $(function() {
+            
+                testEditor = editormd("test-editormd", {
+                    htmlDecode: true,
+                    width   : "90%",
+                    height  : 640,
+                    syncScrolling : "single",
+                    path    : "./lib/",
+                    emoji : true,
+                    taskList : true,
+                    tocm            : true,         // Using [TOCM]
+                    tex : true,                   // 开启科学公式TeX语言支持，默认关闭
+                    flowChart : true,             // 开启流程图支持，默认关闭
+                    sequenceDiagram : true,       // 开启时序/序列图支持，默认关闭,
+                    codeFold: false,
+                    dragDrop: true,
+                    allowDropFileTypes: ['images/jpeg'],
+                    foldImg: {
+                        rangeFinder: function(cm, line, hideEnd) {
+                            line = line.line;
+                            //console.log(line);
+                            var lineText = cm.getLine(line), at = lineText.length, startChar, tokenType;
+                            if (/\![^\]]*\]\(([^)]+)\)/.test(lineText)) {
+                                var baseEl = document.createElement('span');
+                                baseEl.innerHTML = '<span class="imgFold"><img src="' + RegExp.$1 + '"></span>';
+                                cm.options.foldImg.widget = baseEl;
+                                return {from: {line: line, ch: lineText.indexOf('![](data:')}, to: {line: line, ch: lineText.indexOf(')') + 1}}
+                            }
+                        }
+                    },
+                    onload: init
+                });
+                
+                function init() {
+                    testEditor.cm.execCommand('foldImg');
+                    var onload = function (event) {
+                        testEditor.cm.replaceSelection('![](' + event.target.result + ')');
+                    };
+
+                    testEditor.cmElement.on('paste', function (e) {
+                        var items;
+                        if ((items = e.originalEvent.clipboardData.items).length) {
+                            for (var i = 0, l = items.length; i < l; i++) {
+                                if (items[i].type.match(/^image\//)) {
+                                    var reader = new FileReader();
+                                    reader.onload = onload;
+                                    reader.readAsDataURL(items[i].getAsFile());
+                                }
+                            }
+                        }
+                    });
+                    testEditor.cmElement.on('drop', function (e) {
+                        var files = e.originalEvent.dataTransfer.files;
+                        for (var i = 0, l = files.length; i < l; i++) {
+                            var reader = new FileReader();
+                            reader.onload = onload;
+                            reader.readAsDataURL(files[i]);
+                        }
+                        e.preventDefault();
+                    });
+                }
+            });
+            
+            
+        </script>
+    </body>
+</html>

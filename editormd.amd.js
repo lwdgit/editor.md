@@ -7,7 +7,7 @@
  * @license     MIT License
  * @author      Pandao
  * {@link       https://github.com/pandao/editor.md}
- * @updateTime  2015-06-09
+ * @updateTime  2016-05-01
  */
 
 ;(function(factory) {
@@ -764,7 +764,7 @@
                 mode                      : settings.mode,
                 theme                     : settings.editorTheme,
                 tabSize                   : settings.tabSize,
-                dragDrop                  : false,
+                dragDrop                  : settings.dragDrop,
                 autofocus                 : settings.autoFocus,
                 autoCloseTags             : settings.autoCloseTags,
                 readOnly                  : (settings.readOnly) ? "nocursor" : false,
@@ -777,6 +777,7 @@
                                                 }
                                             },
                 foldGutter                : settings.codeFold,
+                foldImg                   : settings.foldImg,
                 gutters                   : ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
                 matchBrackets             : settings.matchBrackets,
                 indentWithTabs            : settings.indentWithTabs,

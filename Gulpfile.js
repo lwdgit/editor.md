@@ -5,7 +5,7 @@ var gulp         = require("gulp");
 var gutil        = require("gulp-util");
 var sass         = require("gulp-ruby-sass");
 var jshint       = require("gulp-jshint");
-var uglify       = require("gulp-uglifyjs");
+var uglifyjs       = require("gulp-uglifyjs");
 var rename       = require("gulp-rename");
 var concat       = require("gulp-concat");
 var notify       = require("gulp-notify");
@@ -19,6 +19,14 @@ var replace      = require("gulp-replace");
 
 pkg.name         = "Editor.md";
 pkg.today        = dateFormat;
+
+var uglify = function() {
+    if (true) {
+        return uglifyjs.apply(this, arguments);
+    } else {
+        return arguments;
+    }
+}
 
 var headerComment = ["/*", 
 					" * <%= pkg.name %>",
@@ -199,7 +207,8 @@ var codeMirror = {
     path : {
         src : {
             mode : "lib/codemirror/mode",
-            addon : "lib/codemirror/addon"
+            addon : "lib/codemirror/addon",
+            cm: "lib/codemirror/lib/codemirror.js"
         },
         dist : "lib/codemirror"
     },
@@ -247,6 +256,7 @@ var codeMirror = {
         "edit/closetag", 
         "fold/foldcode",
         "fold/foldgutter",
+        "fold/foldImg",
         "fold/indent-fold",
         "fold/brace-fold",
         "fold/xml-fold", 
@@ -259,6 +269,15 @@ var codeMirror = {
         "search/match-highlighter"
     ]
 };
+
+gulp.task("cm", function() {
+    return gulp.src(codeMirror.path.src.cm)
+                .pipe(concat("codemirror.min.js"))
+                .pipe(gulp.dest(codeMirror.path.dist))
+                .pipe(uglify()) // {outSourceMap: true, sourceRoot: codeMirror.path.dist}
+                .pipe(gulp.dest(codeMirror.path.dist))
+                .pipe(notify({ message: "codemirror task complete!" }));
+});
 
 gulp.task("cm-mode", function() { 
     
@@ -337,6 +356,7 @@ gulp.task("default", function() {
     gulp.run("scss3");
     gulp.run("js");
     gulp.run("amd");
+    gulp.run('cm');
     gulp.run("cm-addon");
     gulp.run("cm-mode");
 });

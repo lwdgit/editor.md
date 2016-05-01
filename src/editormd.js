@@ -682,7 +682,7 @@
                 mode                      : settings.mode,
                 theme                     : settings.editorTheme,
                 tabSize                   : settings.tabSize,
-                dragDrop                  : false,
+                dragDrop                  : settings.dragDrop,
                 autofocus                 : settings.autoFocus,
                 autoCloseTags             : settings.autoCloseTags,
                 readOnly                  : (settings.readOnly) ? "nocursor" : false,
@@ -695,6 +695,7 @@
                                                 }
                                             },
                 foldGutter                : settings.codeFold,
+                foldImg                   : settings.foldImg,
                 gutters                   : ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
                 matchBrackets             : settings.matchBrackets,
                 indentWithTabs            : settings.indentWithTabs,
