@@ -58,18 +58,47 @@
                 });
                 
                 function init() {
+                    var Opts = {
+                        preview: function(script) {
+                            var w = window.open('', '_blank', ''),
+                                d = w.document;
+                            
+                            var title = document.querySelector('.editormd-preview h1').textContent || '';
+                            var head = '<title>' + title + '</title>';
+                            var links = document.querySelectorAll('link[href]');
+                            for(var i = 0, l = links.length; i < l; i++) {
+                                head += '<link rel="stylesheet" href="' + links[i].href + '">'
+                            }
+                            var content = document.querySelector('.editormd-preview').innerHTML;
+                            if (script) {
+                                content += '<script'+'>' + script + '<' + '/script>';//这里有坑
+                            }
+                            d.open();
+                            d.write('<html><head>' + head + '</head><body class="preview">' + content + '</div></body></html>');
+                            d.close();  
+                        },
+                        save: function() {
+                            Opts.preview();
+                        },
+                        print: function() {
+                            Opts.preview('window.print()');
+                        }
+                    }
+                    this.addKeyMap({
+                        'Cmd-S': Opts.save,
+                        'Cmd-P': Opts.print
+                    });
                     testEditor.cm.execCommand('foldImg');
-                    var onload = function (event) {
+                    var imgOnload = function (event) {
                         testEditor.cm.replaceSelection('![](' + event.target.result + ')');
                     };
-
                     testEditor.cmElement.on('paste', function (e) {
                         var items;
                         if ((items = e.originalEvent.clipboardData.items).length) {
                             for (var i = 0, l = items.length; i < l; i++) {
                                 if (items[i].type.match(/^image\//)) {
                                     var reader = new FileReader();
-                                    reader.onload = onload;
+                                    reader.onload = imgOnload;
                                     reader.readAsDataURL(items[i].getAsFile());
                                 }
                             }
@@ -78,9 +107,13 @@
                     testEditor.cmElement.on('drop', function (e) {
                         var files = e.originalEvent.dataTransfer.files;
                         for (var i = 0, l = files.length; i < l; i++) {
+                            var file = files[i];
                             var reader = new FileReader();
-                            reader.onload = onload;
-                            reader.readAsDataURL(files[i]);
+                            if (file.type.indexOf('text') === -1) {
+                                reader.readAsDataURL(file); 
+                                reader.onload = imgOnload;
+                            }
+                            
                         }
                         e.preventDefault();
                     });
