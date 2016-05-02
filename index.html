@@ -115,7 +115,8 @@
                     d.close();
                 },
                 save: function() {
-                    save(testEditor.getMarkdown());
+                    var title;
+                    save(testEditor.getMarkdown(), ((title = document.querySelector('.editormd-preview h1')) ? title.textContent : 'unamed') + '.md');
                 },
 
                 print: function() {
