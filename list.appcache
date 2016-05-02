@@ -1,0 +1,34 @@
+CACHE MANIFEST
+# performance.getEntries().map(function(item) {return item.name.replace(/^https?:/,'')}).join('\r\n').replace(/\/\/lwdgit\.github\.io/g, '').replace(/\/\/127.0.0.1[^/]*/g, '')
+
+# version 0.0.2
+
+CACHE:
+
+/editor.md/examples/css/style.css
+/editor.md/css/editormd.css
+/editor.md/examples/js/jquery.min.js
+/editor.md/editormd.js
+/editor.md/lib/codemirror/codemirror.min.css
+/editor.md/lib/codemirror/addon/dialog/dialog.css
+/editor.md/lib/codemirror/addon/search/matchesonscrollbar.css
+/editor.md/lib/codemirror/codemirror.min.js
+/editor.md/images/loading.gif
+/editor.md/lib/codemirror/modes.min.js
+/editor.md/lib/codemirror/addons.min.js
+/editor.md/lib/marked.min.js
+/editor.md/fonts/fontawesome-webfont.woff2?v=4.3.0
+/editor.md/lib/prettify.min.js
+/editor.md/lib/raphael.min.js
+/editor.md/lib/underscore.min.js
+/editor.md/lib/flowchart.min.js
+/editor.md/lib/jquery.flowchart.min.js
+/editor.md/lib/sequence-diagram.min.js
+//cdnjs.cloudflare.com/ajax/libs/KaTeX/0.3.0/katex.min.css
+//cdnjs.cloudflare.com/ajax/libs/KaTeX/0.3.0/katex.min.js
+
+
+NETWORK: 
+http://*
+https://*
+*
