@@ -7,7 +7,7 @@
  * @license     MIT License
  * @author      Pandao
  * {@link       https://github.com/pandao/editor.md}
- * @updateTime  2016-05-01
+ * @updateTime  2016-05-02
  */
 
 ;(function(factory) {
@@ -4249,8 +4249,8 @@
     // 使用国外的CDN，加载速度有时会很慢，或者自定义URL
     // You can custom KaTeX load url.
     editormd.katexURL  = {
-        css : "//cdnjs.cloudflare.com/ajax/libs/KaTeX/0.3.0/katex.min",
-        js  : "//cdnjs.cloudflare.com/ajax/libs/KaTeX/0.3.0/katex.min"
+        css : "lib/KaTeX/0.3.0/katex.min",
+        js  : "lib/KaTeX/0.3.0/katex.min"
     };
     
     editormd.kaTeXLoaded = false;

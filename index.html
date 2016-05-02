@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <title>Online Markdown</title>
     <link rel="stylesheet" href="./examples/css/style.css" />
-    <link rel="stylesheet" href="./css/editormd.css" />
+    <link rel="stylesheet" href="./css/editormd.min.css" />
 </head>
 
 <body>
@@ -18,7 +18,7 @@
     </style>
     <div id="layout">
         <div id="test-editormd">
-            <textarea style="display:none;">
+<textarea style="display:none;">
 # Welcome to use Online Markdown Editor 
 ## Functions & Features: 
 * Cmd+S to save the file 
@@ -26,13 +26,123 @@
 * Drag and drop a file into here to load it 
 * paste image as base64 
 * support markdown extend & flowchart 
+* offline available
 
 > Tips: Editor will auto save your code into localStorage
-            </textarea>
+
+
+## More powerful functions:
+
+#### GFM task list
+
+- [x] GFM task list 1
+- [x] GFM task list 2
+- [ ] GFM task list 3
+    - [ ] GFM task list 3-1
+    - [ ] GFM task list 3-2
+    - [ ] GFM task list 3-3
+- [ ] GFM task list 4
+    - [ ] GFM task list 4-1
+    - [ ] GFM task list 4-2
+
+[========]
+
+### Emoji表情 :smiley:
+
+> Blockquotes :star:
+
+#### GFM task lists & Emoji & fontAwesome icon emoji & editormd logo emoji :editormd-logo-5x:
+
+- [x] :smiley: @mentions, :smiley: #refs, [links](), **formatting**, and <del>tags</del> supported :editormd-logo:;
+- [x] list syntax required (any unordered or ordered list supported) :editormd-logo-3x:;
+- [x] [ ] :smiley: this is a complete item :smiley:;
+- [ ] []this is an incomplete item [test link](#) :fa-star: @pandao; 
+- [ ] [ ]this is an incomplete item :fa-star: :fa-gear:;
+    - [ ] :smiley: this is an incomplete item [test link](#) :fa-star: :fa-gear:;
+    - [ ] :smiley: this is  :fa-star: :fa-gear: an incomplete item [test link](#);
+ 
+#### 反斜杠 Escape
+
+\*literal asterisks\*
+
+[========]
+            
+### 科学公式 TeX(KaTeX)
+
+$$E=mc^2$$
+
+行内的公式$$E=mc^2$$行内的公式，行内的$$E=mc^2$$公式。
+
+$$x > y$$
+
+$$\(\sqrt{3x-1}+(1+x)^2\)$$
+                    
+$$\sin(\alpha)^{\theta}=\sum_{i=0}^{n}(x^i + \cos(f))$$
+
+多行公式：
+
+```math
+\displaystyle
+\left( \sum\_{k=1}^n a\_k b\_k \right)^2
+\leq
+\left( \sum\_{k=1}^n a\_k^2 \right)
+\left( \sum\_{k=1}^n b\_k^2 \right)
+```
+
+```katex
+\displaystyle 
+    \frac{1}{
+        \Bigl(\sqrt{\phi \sqrt{5}}-\phi\Bigr) e^{
+        \frac25 \pi}} = 1+\frac{e^{-2\pi}} {1+\frac{e^{-4\pi}} {
+        1+\frac{e^{-6\pi}}
+        {1+\frac{e^{-8\pi}}
+         {1+\cdots} }
+        } 
+    }
+```
+
+```latex
+f(x) = \int_{-\infty}^\infty
+    \hat f(\xi)\,e^{2 \pi i \xi x}
+    \,d\xi
+```
+
+### 分页符 Page break
+
+> Print Test: Ctrl + P
+
+[========]
+
+### 绘制流程图 Flowchart
+
+```flow
+st=>start: 用户登陆
+op=>operation: 登陆操作
+cond=>condition: 登陆成功 Yes or No?
+e=>end: 进入后台
+
+st->op->cond
+cond(yes)->e
+cond(no)->op
+```
+
+[========]
+                    
+### 绘制序列图 Sequence Diagram
+                    
+```seq
+Andrew->China: Says Hello 
+Note right of China: China thinks\nabout it 
+China-->Andrew: How are you? 
+Andrew->>China: I am good thanks!
+```
+
+### End
+</textarea>
         </div>
     </div>
     <script src="./examples/js/jquery.min.js"></script>
-    <script src="./editormd.js"></script>
+    <script src="./editormd.min.js"></script>
     <script type="text/javascript">
     var testEditor;
     $(function() {
@@ -58,22 +168,33 @@
                     //console.log(line);
                     var lineText = cm.getLine(line),
                         at = lineText.length,
-                        startChar, tokenType;
-                    if (/\![^\]]*\]\(([^)]+)\)/.test(lineText)) {
-                        var baseEl = document.createElement('span');
-                        baseEl.innerHTML = '<span class="imgFold"><img src="' + RegExp.$1 + '"></span>';
-                        cm.options.foldImg.widget = baseEl;
-                        return {
-                            from: {
-                                line: line,
-                                ch: lineText.indexOf('![](data:')
-                            },
-                            to: {
-                                line: line,
-                                ch: lineText.indexOf(')') + 1
+                        startChar, tokenType, start;
+                        var baseEl = document.createElement('span'); baseEl.className = 'imgFold';
+                     
+                        if (lineText.indexOf('](') > -1 && (start = lineText.indexOf('![')) > -1) {
+                            var reStructStr = '', offset = 0, imgsrc = '', endpos;
+                            lineText = lineText.replace(/\![^\]]*\]\(([^)]+)\)/g, function(matches, src, pos, all) {
+                                reStructStr = reStructStr || all;
+                                pos += offset;
+                                imgsrc = '<img src="' + src + '">';
+                                reStructStr = reStructStr.substr(0, pos) + imgsrc + reStructStr.substr(endpos = pos + matches.length);
+                                offset += (imgsrc.length - matches.length);
+                            });
+                            if (reStructStr) {
+                                baseEl.innerHTML = reStructStr;
+                                cm.options.foldImg.widget = baseEl;
+                                return {
+                                    from: {
+                                        line: line,
+                                        ch: start
+                                    },
+                                    to: {
+                                        line: line,
+                                        ch: endpos
+                                    }
+                                }
                             }
                         }
-                    }
                 }
             },
             onload: init
