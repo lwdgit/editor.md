@@ -89,6 +89,9 @@
                         'Cmd-P': Opts.print
                     });
                     testEditor.cm.execCommand('foldImg');
+                    testEditor.cm.on('blur', function() {
+                        testEditor.cm.execCommand('foldImg');
+                    });
                     var imgOnload = function (event) {
                         testEditor.cm.replaceSelection('![](' + event.target.result + ')');
                     };
