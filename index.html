@@ -171,7 +171,7 @@ Andrew->>China: I am good thanks!
                         startChar, tokenType, start;
                         var baseEl = document.createElement('span'); baseEl.className = 'imgFold';
                      
-                        if (lineText.indexOf('](') > -1 && (start = lineText.indexOf('![')) > -1) {
+                        if ((start = lineText.indexOf('![')) > -1 && !/^( {4,}|\t)/.test(lineText) && lineText.indexOf('](') > -1) {
                             var reStructStr = '', offset = 0, imgsrc = '', endpos;
                             lineText = lineText.replace(/\![^\]]*\]\(([^)]+)\)/g, function(matches, src, pos, all) {
                                 reStructStr = reStructStr || all;
