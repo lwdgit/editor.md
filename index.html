@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh" manifest="list.appcache">
     <head>
         <meta charset="utf-8" />
         <title>Online Markdown</title>
@@ -17,7 +17,20 @@
     </style>
         <div id="layout">
             <div id="test-editormd">
-                <textarea style="display:none;"></textarea>
+                <textarea style="display:none;">
+# Welcome to use Online Markdown Editor
+
+
+## Functions & Features:
+
+ * Cmd+S to save the file
+ * Cmd+P to print
+ * Drag and drop a file into here to load it
+ * paste image as base64
+ * support markdown extend & flowchart
+
+ > Editor will auto save your code into localStorage
+                </textarea>
             </div>
         </div>
         <script src="./examples/js/jquery.min.js"></script>
@@ -28,8 +41,8 @@
             
                 testEditor = editormd("test-editormd", {
                     htmlDecode: true,
-                    width   : "90%",
-                    height  : 640,
+                    width   : "100%",
+                    height  : window.outerHeight || document.body.clientHeight,
                     syncScrolling : "single",
                     path    : "./lib/",
                     emoji : true,
@@ -56,8 +69,24 @@
                     },
                     onload: init
                 });
-                
+
+                function initSave() {
+                    var autoSave = function(content) {
+                        content  = testEditor.getMarkdown();
+                        localStorage.setItem('__tempMarkdown', content);
+                    }.bind(this);
+                    window.onbeforeunload = window.onunload = autoSave;
+                    document.addEventListener('visibilitychange', autoSave.bind(this));
+
+
+                    var URL = window.URL || window.webkitURL || window.mozURL || window.msURL;
+                    navigator.saveBlob = navigator.saveBlob || navigator.msSaveBlob || navigator.mozSaveBlob || navigator.webkitSaveBlob;
+                    window.saveAs = window.saveAs || window.webkitSaveAs || window.mozSaveAs || window.msSaveAs;
+                }
+
+
                 function init() {
+                    
                     var Opts = {
                         preview: function(script) {
                             var w = window.open('', '_blank', ''),
@@ -78,8 +107,9 @@
                             d.close();  
                         },
                         save: function() {
-                            Opts.preview();
+                            save(testEditor.getMarkdown());
                         },
+
                         print: function() {
                             Opts.preview('window.print()');
                         }
@@ -120,6 +150,27 @@
                         }
                         e.preventDefault();
                     });
+                    function save(code, name){
+                      var blob = new Blob([code], { type: 'text/plain' });
+                      if(window.saveAs){
+                        window.saveAs(blob, name);
+                      }else if(navigator.saveBlob){
+                        navigator.saveBlob(blob, name);
+                      } else{
+                        url = URL.createObjectURL(blob);
+                        var link = document.createElement("a");
+                        link.setAttribute("href",url);
+                        link.setAttribute("download",name);
+                        var event = document.createEvent('MouseEvents');
+                        event.initMouseEvent('click', true, true, window, 1, 0, 0, 0, 0, false, false, false, false, 0, null);
+                        link.dispatchEvent(event);
+                      }
+                    }
+                    var markdown = localStorage.getItem('__tempMarkdown');
+                    if (markdown) {
+                        testEditor.setMarkdown(markdown);
+                    }
+                    initSave();
                 }
             });
             
